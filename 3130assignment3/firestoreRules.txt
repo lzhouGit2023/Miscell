@@ -1,0 +1,41 @@
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+
+                //match /{document=**} {
+
+                match /contacts/{contact} {
+
+                allow read: if true;
+
+      allow delete: if true; //<- add this so you can delete data from the DB!
+
+      allow write: if isDataValid();
+
+    }
+
+
+
+    function isDataValid()
+
+    {//maybe use length instead of size??
+
+                return request.resource.data.email.matches('.*@.*') && request.resource.data.name.size() > 0
+   && request.resource.data.name.size()<48 &&request.resource.data.address.size()<50
+   && (request.resource.data.business.matches("Fisher")||request.resource.data.business.matches("Distributor")||
+   request.resource.data.business.matches("Processor")||request.resource.data.business.matches("Fish Monger"))
+  &&request.resource.data.businessNumber.matches("[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]")
+   && (request.resource.data.provinceOrTerritory.matches("AB")||request.resource.data.provinceOrTerritory.matches("BC")||
+   request.resource.data.provinceOrTerritory.matches("MB")||request.resource.data.provinceOrTerritory.matches("NB")
+   ||request.resource.data.provinceOrTerritory.matches("NL")||request.resource.data.provinceOrTerritory.matches("NS")||
+   request.resource.data.provinceOrTerritory.matches("NT")||request.resource.data.provinceOrTerritory.matches("NU")
+   ||request.resource.data.provinceOrTerritory.matches("ON")||request.resource.data.provinceOrTerritory.matches("PE")||
+   request.resource.data.provinceOrTerritory.matches("QC")||request.resource.data.provinceOrTerritory.matches("SK")
+   ||request.resource.data.provinceOrTerritory.matches("YT")||request.resource.data.provinceOrTerritory.size()==0)
+
+    }
+
+  }
+
+}
+
